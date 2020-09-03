@@ -61,8 +61,16 @@ public class CinemaFunction {
     public void setDate(String date) {
         this.date = date;
     }
-    
-    
-    
+
+
+    public int getAvailableSeats() {
+        int ans = 0;
+        for(List<Boolean> rows: seats){
+            for (Boolean cols: rows){
+                if (cols) ans++;
+            }
+        }
+        return ans;
+    }
     
 }
