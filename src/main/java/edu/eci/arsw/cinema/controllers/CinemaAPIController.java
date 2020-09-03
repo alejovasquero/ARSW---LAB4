@@ -15,6 +15,7 @@ import edu.eci.arsw.cinema.services.CinemaServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author cristian
  */
 @RestController
-@RequestMapping(value = "/cinema")
+@RequestMapping(value = "/cinemas")
 public class CinemaAPIController {
 
     @Autowired
@@ -34,19 +35,31 @@ public class CinemaAPIController {
         try {
             System.out.println(objectToJson(cinemaServices.getAllCinemas()));
             //obtener datos que se enviarán a través del API
-            //return new ResponseEntity<>(data,HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(objectToJson(cinemaServices.getAllCinemas()),HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>("Error bla bla bla",HttpStatus.NOT_FOUND);
         }
-        return null;
+    }
+
+    @RequestMapping(value="/{name}", method = RequestMethod.GET)
+    public ResponseEntity<?> manejadorGetRecursoCinemaNombre(@PathVariable String name){
+        try {
+            System.out.println(name);
+            String json = objectToJson(cinemaServices.getCinemaByName(name));
+            //obtener datos que se enviarán a través del API
+            return new ResponseEntity<>(json,HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
+        }
     }
 
     private String objectToJson(Object a){
         ObjectMapper objectMapper = new ObjectMapper();
         String json = null;
         try {
-            json = objectMapper.writeValueAsString(a);
+            json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(a);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
