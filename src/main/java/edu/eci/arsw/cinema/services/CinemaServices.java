@@ -7,26 +7,43 @@ package edu.eci.arsw.cinema.services;
 
 import edu.eci.arsw.cinema.model.Cinema;
 import edu.eci.arsw.cinema.model.CinemaFunction;
+import edu.eci.arsw.cinema.model.Movie;
 import edu.eci.arsw.cinema.persistence.CinemaException;
+import edu.eci.arsw.cinema.persistence.CinemaPersistenceException;
 import edu.eci.arsw.cinema.persistence.CinemaPersitence;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import edu.eci.arsw.cinema.services.filters.CinemaFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author cristian
  */
+@Service
+@Scope("prototype")
 public class CinemaServices {
     @Autowired
     CinemaPersitence cps=null;
-    
-    public void addNewCinema(Cinema c){
-        
+
+    @Autowired
+    CinemaFilter filter;
+
+    public void addNewCinema(Cinema c) throws CinemaException {
+        try {
+            cps.saveCinema(c);
+        } catch (CinemaPersistenceException e) {
+            throw new CinemaException("Error al insertar el nuevo cinema");
+        }
     }
     
     public Set<Cinema> getAllCinemas(){
-        return null;
+        return cps.getCinemas();
     }
     
     /**
@@ -36,17 +53,50 @@ public class CinemaServices {
      * @throws CinemaException
      */
     public Cinema getCinemaByName(String name) throws CinemaException{
-        throw new UnsupportedOperationException("Not supported yet."); 
+        try {
+            return cps.getCinema(name);
+        } catch (CinemaPersistenceException e) {
+            throw new CinemaException("Error obteniendo el cinema con el nombre dado", e);
+        }
     }
     
     
-    public void buyTicket(int row, int col, String cinema, String date, String movieName){
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public void buyTicket(int row, int col, String cinema, String date, String movieName) throws CinemaException {
+        cps.buyTicket(row, col, cinema, date, movieName);
     }
     
-    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date){
+        return cps.getFunctionsbyCinemaAndDate(cinema, date);
     }
 
 
+    public CinemaPersitence getCps(){
+        return cps;
+    }
+
+    public void setCps(CinemaPersitence cps){
+        this.cps = cps;
+    }
+
+
+    public <E> List<Movie> getFilteredMovies(String cinema, String date, E criteria) throws CinemaException{
+        ArrayList<CinemaFunction> ava = new ArrayList<CinemaFunction>();
+        try {
+            for(CinemaFunction cf: getCinemaByName(cinema).getFunctions()){
+                if(cf.getDate().equals(date)){
+                    ava.add(cf);
+                }
+            }
+        } catch ( NullPointerException e) {
+            throw new CinemaException("El Cinema especificado no existe", e);
+        }
+        return filter.apply(ava, criteria);
+    }
+
+    public void setFilter(CinemaFilter c){
+        filter = c;
+    }
+    public CinemaFilter getFilter(){
+        return filter;
+    }
 }
