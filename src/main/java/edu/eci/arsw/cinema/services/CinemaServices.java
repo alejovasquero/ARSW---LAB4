@@ -15,6 +15,7 @@ import edu.eci.arsw.cinema.persistence.CinemaPersitence;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.eci.arsw.cinema.services.filters.CinemaFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +66,29 @@ public class CinemaServices {
         cps.buyTicket(row, col, cinema, date, movieName);
     }
     
-    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date){
-        return cps.getFunctionsbyCinemaAndDate(cinema, date);
+    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date)throws CinemaException {
+        try {
+            return cps.getFunctionsbyCinemaAndDate(cinema, date);
+        } catch (CinemaPersistenceException e) {
+            throw new CinemaException("Error obteniendo el cinema con el nombre especificado");
+        }
     }
 
+    public List<CinemaFunction> getFunctionsbyCinemaAndExactDay(String cinema, String date)throws CinemaException {
+        try {
+            return cps.getFunctionsbyCinemaAndExactDay(cinema, date);
+        } catch (CinemaPersistenceException e) {
+            throw new CinemaException("Error obteniendo el cinema con el nombre especificado");
+        }
+    }
+
+    public CinemaFunction getFunctionbyCinemaDateAndMovie(String cinema, String date, String movie) throws CinemaException {
+        try {
+            return cps.getFunctionbyCinemaDateAndMovie(cinema, date, movie);
+        } catch (CinemaPersistenceException e) {
+            throw new CinemaException("Error obteniendo el cinema con el nombre especificado");
+        }
+    }
 
     public CinemaPersitence getCps(){
         return cps;

@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.eci.arsw.cinema.model.Cinema;
+import edu.eci.arsw.cinema.model.CinemaFunction;
+import edu.eci.arsw.cinema.persistence.CinemaException;
 import edu.eci.arsw.cinema.services.CinemaServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,33 @@ public class CinemaAPIController {
             return new ResponseEntity<>(json,HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value="/{name}/{date}")
+    public ResponseEntity<?>  manejadorGetRecursoCinemaNombreFecha(
+            @PathVariable String name, @PathVariable("date") String fecha){
+        String ans = null;
+        try {
+            System.out.println(fecha);
+            ans = objectToJson(cinemaServices.getFunctionsbyCinemaAndExactDay(name, fecha));
+
+            return new ResponseEntity<>(ans,HttpStatus.NOT_FOUND);
+        } catch (CinemaException e) {
+            return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value="/{name}/{date}/{moviename}")
+    public ResponseEntity<?>  manejadorGetRecursoCinemaNombreFecha(
+            @PathVariable String name, @PathVariable("date") String fecha, @PathVariable String moviename){
+        String ans = null;
+        try {
+            CinemaFunction a = cinemaServices.getFunctionbyCinemaDateAndMovie(name, fecha, moviename);
+            ans = objectToJson(a);
+            return new ResponseEntity<>(ans,HttpStatus.NOT_FOUND);
+        } catch (CinemaException e) {
             return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
         }
     }

@@ -79,13 +79,39 @@ public class InMemoryCinemaPersistence implements CinemaPersitence {
     }
 
     @Override
-    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date) {
+    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date) throws CinemaPersistenceException {
         List<CinemaFunction> ans = null;
         if (cinemas.containsKey(cinema)) {
             ans = cinemas.get(cinema).getFunctions().stream().filter(p -> p.getDate().equals(date))
                     .collect(Collectors.toList());
         } else {
-            ans = null;
+            throw new CinemaPersistenceException("El cinema especificado no existe");
+        }
+        return ans;
+    }
+
+    @Override
+    public List<CinemaFunction> getFunctionsbyCinemaAndExactDay(String cinema, String date) throws CinemaPersistenceException {
+        List<CinemaFunction> ans = null;
+        if (cinemas.containsKey(cinema)) {
+            ans = cinemas.get(cinema).getFunctions().stream().filter(p -> p.getDate().contains(date))
+                    .collect(Collectors.toList());
+        } else {
+            throw new CinemaPersistenceException("El cinema especificado no existe");
+        }
+        return ans;
+    }
+
+    @Override
+    public CinemaFunction getFunctionbyCinemaDateAndMovie(String cinema, String date, String movie) throws CinemaPersistenceException {
+        CinemaFunction ans = null;
+        if (cinemas.containsKey(cinema)) {
+            List<CinemaFunction> list = cinemas.get(cinema).getFunctions().stream()
+                    .filter(p -> p.getDate().equals(date) && p.getMovie().getName().equals(movie))
+                    .collect(Collectors.toList());
+            ans = list.size() > 0 ? list.get(0) : null;
+        } else {
+            throw new CinemaPersistenceException("El cinema especificado no existe");
         }
         return ans;
     }
