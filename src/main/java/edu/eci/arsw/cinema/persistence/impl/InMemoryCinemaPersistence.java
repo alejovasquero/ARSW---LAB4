@@ -110,6 +110,9 @@ public class InMemoryCinemaPersistence implements CinemaPersitence {
                     .filter(p -> p.getDate().equals(date) && p.getMovie().getName().equals(movie))
                     .collect(Collectors.toList());
             ans = list.size() > 0 ? list.get(0) : null;
+            if(ans == null){
+                throw new CinemaPersistenceException("La película especificada no existe");
+            }
         } else {
             throw new CinemaPersistenceException("El cinema especificado no existe");
         }

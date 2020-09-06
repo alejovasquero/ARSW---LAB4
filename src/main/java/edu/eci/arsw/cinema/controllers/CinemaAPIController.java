@@ -5,11 +5,15 @@
  */
 package edu.eci.arsw.cinema.controllers;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import edu.eci.arsw.cinema.model.Cinema;
 import edu.eci.arsw.cinema.model.CinemaFunction;
 import edu.eci.arsw.cinema.persistence.CinemaException;
@@ -17,10 +21,8 @@ import edu.eci.arsw.cinema.services.CinemaServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 /**
  *
  * @author cristian
@@ -32,6 +34,8 @@ public class CinemaAPIController {
     @Autowired
     CinemaServices cinemaServices;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> manejadorGetRecursoCinema(){
         try {
@@ -40,7 +44,7 @@ public class CinemaAPIController {
             return new ResponseEntity<>(objectToJson(cinemaServices.getAllCinemas()),HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
-            return new ResponseEntity<>("Error bla bla bla",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
         }
     }
 
@@ -64,28 +68,47 @@ public class CinemaAPIController {
         try {
             System.out.println(fecha);
             ans = objectToJson(cinemaServices.getFunctionsbyCinemaAndExactDay(name, fecha));
-
-            return new ResponseEntity<>(ans,HttpStatus.NOT_FOUND);
-        } catch (CinemaException e) {
+            return new ResponseEntity<>(ans,HttpStatus.ACCEPTED);
+        } catch (CinemaException ex) {
+            Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
         }
     }
 
     @RequestMapping(value="/{name}/{date}/{moviename}")
-    public ResponseEntity<?>  manejadorGetRecursoCinemaNombreFecha(
+    public ResponseEntity<?>  manejadorGetRecursoCinemaFechaMovie(
             @PathVariable String name, @PathVariable("date") String fecha, @PathVariable String moviename){
         String ans = null;
         try {
             CinemaFunction a = cinemaServices.getFunctionbyCinemaDateAndMovie(name, fecha, moviename);
             ans = objectToJson(a);
-            return new ResponseEntity<>(ans,HttpStatus.NOT_FOUND);
-        } catch (CinemaException e) {
+            return new ResponseEntity<>(ans,HttpStatus.ACCEPTED);
+        } catch (CinemaException ex) {
+            Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>("HTTP 404 Not Found",HttpStatus.NOT_FOUND);
         }
     }
 
+    @RequestMapping(value="/{name}", method = RequestMethod.POST)
+    public ResponseEntity<?> controladorNuevoRecurso(@RequestBody String body, @PathVariable String name){
+        try {
+            JsonNode root = objectMapper.readTree(body);
+            Cinema nuevo = objectMapper.readValue(body, Cinema.class);
+            if(!nuevo.getName().equals(name)){
+                return new ResponseEntity<>("HTTP 403 Forbidden",HttpStatus.FORBIDDEN);
+            }
+            cinemaServices.addNewCinema(nuevo);
+            return new ResponseEntity<>("HTTP 200 OK",HttpStatus.ACCEPTED);
+        } catch (IOException ex){
+            Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>("HTTP 400 Bad Request",HttpStatus.BAD_REQUEST);
+        } catch (CinemaException ex) {
+            Logger.getLogger(CinemaAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>("HTTP 403 Forbidden",HttpStatus.FORBIDDEN);
+        }
+    }
+
     private String objectToJson(Object a){
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = null;
         try {
             json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(a);
@@ -93,6 +116,5 @@ public class CinemaAPIController {
             e.printStackTrace();
         }
         return json;
-
     }
 }
