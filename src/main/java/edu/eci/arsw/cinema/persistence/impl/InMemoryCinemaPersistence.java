@@ -144,4 +144,9 @@ public class InMemoryCinemaPersistence implements CinemaPersitence {
         return cines;
     }
 
+    @Override
+    public void removeCinema(String name){
+        cinemas.remove(name);
+    }
+
 }

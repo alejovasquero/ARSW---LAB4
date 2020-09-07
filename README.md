@@ -91,6 +91,25 @@ Si el formato json no está bien formado(Campos inconsistentes o que no existen 
 
 ![](img/BAD_R.PNG)
 
+No es posible la creación de cinemas si el json contradice la recurso indicado en la URI.
+
+![](img/CONTRA.PNG)
+
+## Creación de PUT
+
+La creación del cinema se hace si este no existía previamente.
+En este caso el recurso se crea de 0.
+
+![](img/CMD_PUT_CREACION.PNG)
+
+![](img/CREACION_PUT.PNG)
+
+Ahora vamos a modificar este cinema. En el caso del nombre, solo es posible cambiarlo siempre y cuando no exista un cinema con el nuevo nombre.
+
+![](img/PUT_MOD.PNG)
+
+![](img/PUT_UPDATED.PNG)
+
 ## Contribuciones
 
 * **Alejandro Vasquez** - *Extender* - [alejovasquero](https://github.com/alejovasquero)

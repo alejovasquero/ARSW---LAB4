@@ -119,4 +119,8 @@ public class CinemaServices {
     public CinemaFilter getFilter(){
         return filter;
     }
+
+    public void removeCinema(String name){
+        cps.removeCinema(name);
+    }
 }

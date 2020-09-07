@@ -76,5 +76,10 @@ public interface CinemaPersitence {
      * @return Cinemas
      */
 	public Set<Cinema> getCinemas();
-    
+
+    /**
+     * Deletes a Cinema
+     * @param name Name of the cinema
+     */
+	public void removeCinema(String name) ;
 }
