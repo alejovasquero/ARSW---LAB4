@@ -6,6 +6,7 @@
 package edu.eci.arsw.cinema.model;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
@@ -13,12 +14,12 @@ import java.util.List;
  */
 public class Cinema {
     private String name;
-    private List<CinemaFunction> functions; 
+    private CopyOnWriteArrayList<CinemaFunction> functions; 
     
     
     public Cinema(){}
     
-    public Cinema(String name,List<CinemaFunction> functions){
+    public Cinema(String name,CopyOnWriteArrayList<CinemaFunction> functions){
         this.name=name;
         this.functions=functions;
     }
@@ -31,11 +32,11 @@ public class Cinema {
         this.name = name;
     }
 
-    public List<CinemaFunction> getFunctions() {
+    public CopyOnWriteArrayList<CinemaFunction> getFunctions() {
         return this.functions;
     }
 
-    public void setSchedule(List<CinemaFunction> functions) {
+    public void setSchedule(CopyOnWriteArrayList<CinemaFunction> functions) {
         this.functions = functions;
     }
 }

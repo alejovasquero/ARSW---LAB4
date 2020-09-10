@@ -1,0 +1,14 @@
+Analisis
+
+Qué condiciones de carrera se podrían presentar?
+
+    - Consulta y creacion de nuevas funciones, ya que la consulta no mostraria las funciones que se crearon.
+    - Actualizar y consultar funciones, ya que mostrandose una funcion puede estarse modificando al mismo tiempo.
+
+Cuales son las respectivas regiones críticas?
+
+    - Lista de CinemaFunction para los Cinemas
+
+Solucion
+    
+    -Se usa una lista concurrente, en este caso CopyOnWriteArrayList para el recurso de las funciones de los Cinemas

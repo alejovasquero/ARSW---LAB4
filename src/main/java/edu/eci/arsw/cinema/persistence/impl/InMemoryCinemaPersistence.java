@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +37,7 @@ public class InMemoryCinemaPersistence implements CinemaPersitence {
     public InMemoryCinemaPersistence() {
         // load stub data
         String functionDate = "2018-12-18 15:30";
-        List<CinemaFunction> functions = new ArrayList<>();
+        CopyOnWriteArrayList<CinemaFunction> functions = new CopyOnWriteArrayList<>();
         CinemaFunction funct1 = new CinemaFunction(new Movie("SuperHeroes Movie", "Action"), functionDate);
         CinemaFunction funct2 = new CinemaFunction(new Movie("The Night", "Horror"), functionDate);
         functions.add(funct1);
@@ -45,7 +46,7 @@ public class InMemoryCinemaPersistence implements CinemaPersitence {
         cinemas.put("cinemaX", c);
 
         String functionDate1 = "2019-12-18 15:30";
-        List<CinemaFunction> functions1 = new ArrayList<>();
+        CopyOnWriteArrayList<CinemaFunction> functions1 = new CopyOnWriteArrayList<>();
         CinemaFunction funct12 = new CinemaFunction(new Movie("IT", "Action"), functionDate1);
         CinemaFunction funct22 = new CinemaFunction(new Movie("FFF", "Horror"), functionDate1);
         functions1.add(funct12);
@@ -54,7 +55,7 @@ public class InMemoryCinemaPersistence implements CinemaPersitence {
         cinemas.put("CineColombia", c1);
 
         String functionDate2 = "2038-12-18 15:30";
-        List<CinemaFunction> functions2 = new ArrayList<>();
+        CopyOnWriteArrayList<CinemaFunction> functions2 = new CopyOnWriteArrayList<>();
         CinemaFunction funct13 = new CinemaFunction(new Movie("SuperHeroes Movie", "Action"), functionDate2);
         CinemaFunction funct23 = new CinemaFunction(new Movie("The Night", "Horror"), functionDate2);
         functions.add(funct13);
